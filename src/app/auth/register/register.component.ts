@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { RegisterPayload } from '../register-payload';
 
@@ -10,24 +11,21 @@ import { RegisterPayload } from '../register-payload';
 })
 export class RegisterComponent implements OnInit {
 
-  registerForm: FormGroup;
-  registerPayload: RegisterPayload;
+  registerForm = new FormGroup({
+    username: new FormControl(),
+    email: new FormControl(),
+    password: new FormControl(),
+    confirmPassword: new FormControl()
+  });
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService) { 
-    this.formBuilder.group({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
-
-    this.registerPayload = {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    }
+  registerPayload: RegisterPayload = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   }
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
   }
@@ -40,8 +38,9 @@ export class RegisterComponent implements OnInit {
 
     this.authService.register(this.registerPayload).subscribe( data => {
       console.log('register success');
+      this.router.navigateByUrl('/register-success');
     }, error => {
-      console.log('register failed, caused by: '+error);
+      console.log('register failed, caused by: '+ error);
     })
   }
 
